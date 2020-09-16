@@ -3,6 +3,8 @@
 
 using std::cout;
 using std::endl;
+using std::ostream;
+using std::istream;
 
 class complex 
 {
@@ -78,14 +80,24 @@ public:
         return result;
     }
 
+    friend ostream &operator << (ostream &os, const complex &obj);
+    friend istream &operator >> (istream &is, const complex &obj);
 };
 
-void print_num(complex num)
+ostream &operator << (ostream &os, const complex &obj)
 {
-    cout<<num.get_re();
-    if(num.get_im()>0) cout<<"+"<<num.get_im();
-    else cout<<num.get_im();
-    cout<<"i"<<endl;
+    os<<obj.re;
+    if(obj.im>0) os<<"+"<<obj.im;
+    else os<<obj.im;
+    os<<"i";
+    return os;
+}
+
+istream &operator >> (istream &is, const complex &obj)
+{
+    is >> obj.re;
+    is >> obj.im;
+    return is;
 }
 
 int main()
@@ -93,20 +105,20 @@ int main()
     complex a, b(4, 5), c(7, 6);
 
 //  Example for =
-    // a = b;
-    // print_num(a); 
+    a = b;
+    cout<<a<<endl;
 
 //  Example for +
-    // a = b + c;
-    // print_num(a);
+    a = b + c;
+    cout<<a<<endl;
 
 //  Example for -
-    // a = b - c;
-    // print_num(a);
+    a = b - c;
+    cout<<a<<endl;
 
 //  Example for *
-    // a = b*c;
-    // print_num(a);
+    a = b*c;
+    cout<<a<<endl;
 
     return 0;
 }
