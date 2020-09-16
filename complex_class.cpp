@@ -1,85 +1,112 @@
 #include <iostream>
-#include <string>
 #include <cmath>
 
 using std::cout;
 using std::endl;
 
-class complex
+class complex 
 {
-    double re, im;
+private:
+    double re;
+    double im;
 public:
-// Default value is zero
-    complex()
-    {
-        re=0;
-        im=0;
-    }
-    complex(double a, double b)
+//  Default constructor
+    complex (double a=0, double b=0)
     {
         re = a;
         im = b;
     }
-// For mod() of two complex nums
+//  Copy constructor
+    complex (const complex &obj)
+    {
+        re = obj.re;
+        im = obj.im;
+    }
+//  Get module
     double mod()
     {
         return sqrt(re*re+im*im);
     }
-// Output    
-    void output()
-    {
-        cout<<re;
-        if(im>0) cout<<"+"<<im;
-        else cout<<im;
-        cout<<"i"<<endl;
-    }
-// Get real part    
+//  Get real part    
     double get_re()
     {
         return re;
     }
-// Set real part
+//  Set real part
     void set_re(double a)
     {
         re = a;
     }
-// Get imaginary part
+//  Get imaginary part
         double get_im()
     {
-        return re;
+        return im;
     }
-// Set imaginary part
+//  Set imaginary part
     void set_im(double a)
     {
         im = a;
     }
-// Adding two complex numbers
-    void add(complex a, complex b)
+//  Operator =
+    void operator = (const complex &obj)
     {
-        re = a.re+b.re;
-        im = a.im+b.im;
+        re = obj.re;
+        im = obj.im;
     }
-// Substracts two complex numbers
-    void sub(complex a, complex b)
+//  Operator +
+    complex operator + (const complex &obj)
     {
-        re = a.re-b.re;
-        im = a.im-b.im;
-    }  
-// Multiplys two complex nums
-    void mul(complex a, complex b)
-    {
-        re = a.re*b.re-a.im*b.im;
-        im = a.re*b.im+b.re*a.im;
+        complex result;
+        result.re = re + obj.re;
+        result.im = im + obj.im;
+        return result;
     }
+// Operator -
+    complex operator - (const complex &obj)
+    {
+        complex result;
+        result.re = re - obj.re;
+        result.im = im - obj.im;
+        return result;
+    }
+//  Operator *
+    complex operator * (const complex &obj)
+    {
+        complex result;
+        result.re = re*obj.re-im*obj.im;
+        result.im = re*obj.im+obj.re*im;
+        return result;
+    }
+
 };
+
+void print_num(complex num)
+{
+    cout<<num.get_re();
+    if(num.get_im()>0) cout<<"+"<<num.get_im();
+    else cout<<num.get_im();
+    cout<<"i"<<endl;
+}
 
 int main()
 {
+    complex a, b(4, 5), c(7, 6);
 
-    complex a(2 , 2), b(-4, -6);
-    complex c;
-    c.mul(a,b);
-    c.output();
+//  Example for =
+    // a = b;
+    // print_num(a); 
+
+//  Example for +
+    // a = b + c;
+    // print_num(a);
+
+//  Example for -
+    // a = b - c;
+    // print_num(a);
+
+//  Example for *
+    // a = b*c;
+    // print_num(a);
 
     return 0;
 }
