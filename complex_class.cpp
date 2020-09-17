@@ -18,12 +18,6 @@ public:
         re = a;
         im = b;
     }
-//  Copy constructor
-    complex (const complex &obj)
-    {
-        re = obj.re;
-        im = obj.im;
-    }
 //  Get module
     double mod()
     {
@@ -48,12 +42,6 @@ public:
     void set_im(double a)
     {
         im = a;
-    }
-//  Operator =
-    void operator = (const complex &obj)
-    {
-        re = obj.re;
-        im = obj.im;
     }
 //  Operator +
     complex operator + (const complex &obj)
