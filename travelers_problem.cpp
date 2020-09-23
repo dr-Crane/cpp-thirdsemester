@@ -18,10 +18,6 @@ public:
     route(const route &obj)
     {
         amount = obj.amount;
-        if(trip!=NULL)
-        {
-            delete[] trip;
-        }
         trip = new int [amount];
         for(int i=0; i<amount; i++)
         {
@@ -143,34 +139,18 @@ int get_cost(int **matrix, int amount, route obj)
     return result;
 }
 
-int main()
+int **make_matrix(int amount)
 {
-    int amount=0;
-    int range=1;
-
-    cout<<"Amount of the cities: ";
-    cin>>amount;
-    if((amount==0)||(amount==1)) return 1;
-
-
     int **matrix = new int* [amount];
     for(int i=0; i<amount; i++)
     {
         matrix[i] = new int [amount];
     }
+    return matrix;
+}
 
-    for(int i=1; i<amount; i++)
-    {
-        range = range*i;
-    }
-    cout<<"(n-1)! = "<<range<<endl;
-    route *variants = new route [range];
-    for(int i=0; i<range; i++)
-    {
-        variants[i] = amount;
-    }
-
-
+void fill_matrix(int **matrix, int amount)
+{
     cout<<"Costs of trips:"<<endl;
     int space=0, m=0, n=0;
     while(m<amount)
@@ -191,7 +171,10 @@ int main()
         }
         m++;
     }
+}
 
+void print_matrix(int **matrix, int amount)
+{
     for(int i=0; i<amount; i++)
     {
         for(int j=0; j<amount; j++)
@@ -200,8 +183,26 @@ int main()
         }
         cout<<endl;
     }
+}
+
+void true_solve(int amount)
+{
+    int range=1;
+    for(int i=1; i<amount; i++)
+    {
+        range = range*i;
+    }
+    cout<<"(n-1)! = "<<range<<endl;
+    route *variants = new route [range];
+    for(int i=0; i<range; i++)
+    {
+        variants[i] = amount;
+    }
 
     show_all_shifts(variants, amount);
+
+    int **matrix = make_matrix(amount);
+    fill_matrix(matrix, amount);
 
     int cost = 0;
     route lowest = variants[0];
@@ -217,13 +218,22 @@ int main()
         }
         cout<<cost<<endl;
     }
-
     cout<<"\n"<<"optimal trip is: "<<lowest<<"  cost  =   "<<num<<endl;
+}
 
-    delete[] variants;
-    for(int i=0; i<amount; i++)
-    {
-        delete[] matrix[i];
-    }
+int main()
+{
+    int amount=0;
+
+    cout<<"Amount of the cities: ";
+    cin>>amount;
+    if((amount==0)||(amount==1)) return 1;
+
+    true_solve(amount);
+
+
+  
+
+
     return 0;
 }
