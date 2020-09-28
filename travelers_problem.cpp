@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstring>
 
 using std::cout;
 using std::cin;
@@ -10,10 +11,14 @@ class route
     int amount;
     int *trip;
 public:
-    route(int a=0, int *b=NULL)
+    route(int a=0)
     {
         amount = a;
         trip = new int [amount];
+        for(int i=0; i<amount; i++)
+        {
+            trip[i] = i;
+        }
     }
     route(const route &obj)
     {
@@ -28,30 +33,20 @@ public:
     {
         delete[] trip;
     }
-    void operator = (int a)
+    void make_shift(int amount);
+    int get_cost(int **matrix, int amount);
+    void operator = (const route &obj)
     {
-        amount = a;
-        if(trip!=NULL)
-        {
-            delete[] trip;
-        }
-        trip = new int [amount];
-    }
-    void operator = (int *a)
-    {
-        if(trip!=NULL)
-        {
-            delete[] trip;
-        }
+        amount = obj.amount;
         trip = new int [amount];
         for(int i=0; i<amount; i++)
         {
-            trip[i] = a[i];
+            trip[i] = obj.trip[i];
         }
     }
 
+
     friend ostream &operator << (ostream &os, const route &obj);
-    friend int get_cost(int **matrix, int amount, route obj);
 };
 
 ostream &operator << (ostream &os, const route &obj)
@@ -66,66 +61,40 @@ ostream &operator << (ostream &os, const route &obj)
     return os;
 }
 
-void show_all_shifts (route *variants, int amount)
+void route::make_shift(int amount)
 {
-    int *first_trip = new int [amount];
-    int range = 1;
-    for(int i=1; i<amount; i++)
-    {
-        range = range*i;
-    }
-    for(int i=0; i<amount; i++)
-    {
-        first_trip[i] = i;
-    }
-    for(int i=0; i<amount; i++)
-    {
-        variants[0] = first_trip;
-    }
-
-    int count = 0, space = 0;
+    int space = 0;
     
-    while(count<(range-1))
+    int i = amount-2;
+    int j = amount-1;
+    while(i!=0)
     {
-        int i = amount-2;
-        int j = amount-1;
-        while(i!=0)
-        {
-            if(first_trip[i]<first_trip[i+1]) break;
-            i--;
-        }
-        while(i<j)
-        {
-            if(first_trip[i]<first_trip[j]) break;
-            j--;
-        }
-        space = first_trip[i];
-        first_trip[i] = first_trip[j];
-        first_trip[j] = space;
-        int low = i+1;
-        int high = amount-1;
-        while(low<high)
-        {
-            space = first_trip[low];
-            first_trip[low] = first_trip[high];
-            first_trip[high] = space;
-            low++;
-            high--;
-        }
-        count++;
-        variants[count] = first_trip;
+        if(trip[i]<trip[i+1]) break;
+        i--;
     }
-
+    while(i<j)
+    {
+        if(trip[i]<trip[j]) break;
+        j--;
+    }
+    space = trip[i];
+    trip[i] = trip[j];
+    trip[j] = space;
+    int low = i+1;
+    int high = amount-1;
+    while(low<high)
+    {
+        space = trip[low];
+        trip[low] = trip[high];
+        trip[high] = space;
+        low++;
+        high--;
+    }
 }
 
-int get_cost(int **matrix, int amount, route obj)
+int route:: get_cost(int **matrix, int amount)
 {
     int result = 0;
-    int *trip = new int [amount];
-    for(int i=0; i<amount; i++)
-    {
-        trip[i] = obj.trip[i];
-    }
     int i=0, j=0, m=0;
     while(m<amount)
     {
@@ -187,52 +156,50 @@ void print_matrix(int **matrix, int amount)
 
 void true_solve(int amount)
 {
-    int range=1;
+    int **matrix = make_matrix(amount);
+    fill_matrix(matrix, amount);
+    print_matrix(matrix, amount);
+    int range =1;
     for(int i=1; i<amount; i++)
     {
         range = range*i;
     }
-    cout<<"(n-1)! = "<<range<<endl;
-    route *variants = new route [range];
-    for(int i=0; i<range; i++)
+
+    route lowest = amount;
+    route space = amount;
+
+    int cost = lowest.get_cost(matrix, amount);
+    int num = 0;
+    cout<<space<<"   = "<<cost<<endl;
+
+    for(int i=0; i<range-1; i++)
     {
-        variants[i] = amount;
-    }
-
-    show_all_shifts(variants, amount);
-
-    int **matrix = make_matrix(amount);
-    fill_matrix(matrix, amount);
-
-    int cost = 0;
-    route lowest = variants[0];
-    int num = get_cost(matrix, amount, variants[0]);
-    for(int i=0; i<range; i++)
-    {
-        cout<<variants[i]<<"  =   ";
-        cost = get_cost(matrix, amount, variants[i]);
-        if(cost<num)
+        space.make_shift(amount);
+        num = space.get_cost(matrix, amount);
+        cout<<space<<"   = "<<num<<endl;
+        if(num<cost)
         {
-            num = cost;
-            lowest = variants[i];
+            cost = num;
+            lowest = space;
         }
-        cout<<cost<<endl;
+       
     }
-    cout<<"\n"<<"optimal trip is: "<<lowest<<"  cost  =   "<<num<<endl;
+
+    cout<<"\n\n"<<"Optimal trip:\n"<<lowest<<"   = "<<cost<<endl;
+
+    delete[] matrix;
 }
 
-int main()
+int main ()
 {
     int amount=0;
 
     cout<<"Amount of the cities: ";
     cin>>amount;
-    if((amount==0)||(amount==1)) return 1;
+    if((amount==0)||(amount==1)||(amount==2)) return 1;
 
     true_solve(amount);
 
-
-  
 
 
     return 0;
