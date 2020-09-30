@@ -167,7 +167,7 @@ int String :: bm_search(String word)
             }
             else if((word.len-j-1)==0)
             {
-                space = i-word.len-1;
+                space = i-word.len+1;
                 return space;
             }
         }
@@ -178,13 +178,13 @@ int String :: bm_search(String word)
 int main()
 {
     
-    char a[] = "na dwore drowa, na trowe drowa";
+    char a[] = "na dwore drowar, na trawe drowa";
     char b[] = "drowa";
 
     String arr_1 = a;
     String arr_2 = b;
 
-//  Examole for bm_search();
+//  Example for bm_search();
     // int pos = arr_1.bm_search(arr_2);
     // for(int i=0; i<strlen(b); i++)
     // {
