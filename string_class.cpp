@@ -17,7 +17,8 @@ public:
     String &operator + (String &obj);
     String &operator = (String &obj);
 
-    int bm_search (String &obj);
+    int *table();
+    int bm_search(String word);
     int kmp_search (String &obj);
 
     friend ostream & operator << (ostream &os, const String &obj);
@@ -112,14 +113,84 @@ String& String :: operator = (String &obj)
     return *this;
 }
 
+int* String :: table() 
+{
+    int *mass= new int [len];
+
+    for(int i=1; i<len; i++)
+    {
+        mass[len-i-1]=i;
+        for(int j=len-i; j<len-1; j++)
+        {
+            if(line[len-i-1]==line[j] && i!=1) mass[len-i-1]=mass[len-i];
+        }
+    }
+    for(int i=0; i<len-1; i++)
+    {
+        if(line[i]==line[len-1])
+        {
+            mass[len-1]=mass[i];
+            break;
+        }
+        else mass[len-1]=1 + mass[0];
+    }
+
+    return mass;
+}
+
+int String :: bm_search(String word)
+{
+    int *tablew = word.table();
+    int space = 0;
+    for(int i=word.len-1; i<=len; )
+    {
+        for(int j=1; j<word.len; j++){
+            if(line[i-j+1]!=word[word.len-j])
+            {
+                int t=0;
+                for(int k=0; k<word.len; k++)
+                {
+                    if(line[i-j+1]==word[k])
+                    {
+                        t = tablew[k];
+                        break;
+                    }
+                    else t=0;
+                }
+                if(t) 
+                {
+                    i = i + t;
+                    break;
+                }
+                else i = i+word.len-1;
+                break;
+            }
+            else if((word.len-j-1)==0)
+            {
+                space = i-word.len-1;
+                return space;
+            }
+        }
+    }
+    return space;
+}
+
 int main()
 {
     
-    char a[] = "Hello World, it's me , again. ";
-    char b[] = "Second line";
+    char a[] = "na dwore drowa, na trowe drowa";
+    char b[] = "drowa";
+
     String arr_1 = a;
     String arr_2 = b;
-    cout<<arr_1<<endl;
+
+//  Examole for bm_search();
+    // int pos = arr_1.bm_search(arr_2);
+    // for(int i=0; i<strlen(b); i++)
+    // {
+    //     arr_1[pos+i] = ' ';
+    // }
+    // cout<<arr_1<<endl;
 
 
     return 0;
