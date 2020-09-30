@@ -19,7 +19,8 @@ public:
 
     int *table();
     int bm_search(String word);
-    int kmp_search (String &obj);
+    int kmp_search (String word);
+    int *table_kmp();
 
     friend ostream & operator << (ostream &os, const String &obj);
 };
@@ -175,16 +176,75 @@ int String :: bm_search(String word)
     return space;
 }
 
+int* String :: table_kmp()
+{
+    int *arr = new int [len];
+    arr[0] = 0;
+    int length = 0;
+    int i = 1;
+    while (i < len) 
+    {
+        if (line[i] == line[length]) 
+        {
+            length++;
+            arr[i] = length;
+            i++;
+        } 
+        else 
+        {
+            if(length != 0)
+            {
+                length = arr[length - 1];
+            }
+            else 
+            {
+                arr[i] = 0;
+                i++;
+            }
+        }
+    }
+    return arr;
+}
+
+int String :: kmp_search (String word)
+{
+   int *table = word.table_kmp();
+   int i = 0;
+   int j = 0;
+   while (i < len) 
+   {
+        if (word.line[j] == line[i]) 
+        {
+            j++;
+            i++;
+        }
+        if (j == word.len) 
+        {
+            return i-j;
+        }
+        else if (i < len && word.line[j] != line[i]) 
+        {
+            if (j != 0)
+            j = table[j - 1];
+            else
+            i = i + 1;
+        }
+   }
+
+   return 0;
+}
+
 int main()
 {
     
-    char a[] = "na dwore drowar, na trawe drowa";
+    char a[] = "na trawe drowa, na dwore drowa";
     char b[] = "drowa";
 
     String arr_1 = a;
     String arr_2 = b;
 
 //  Example for bm_search();
+
     // int pos = arr_1.bm_search(arr_2);
     // for(int i=0; i<strlen(b); i++)
     // {
@@ -192,6 +252,14 @@ int main()
     // }
     // cout<<arr_1<<endl;
 
+//  Example for kmp_search();
+
+    // int position = arr_1.kmp_search(arr_2);
+    // for(int i=0; i<strlen(b); i++)
+    // {
+    //     arr_1[position+i] = ' ';
+    // }
+    // cout<<arr_1<<endl;
 
     return 0;
 }
