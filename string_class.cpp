@@ -8,14 +8,15 @@ class String
     char *line;
     int len;
 public:
-    String();
+    // String(int a=0);
     String(char *arr);
     String(const String &obj);
    ~String();
     
     char &operator [] (int pos);
-    String &operator + (String &obj);
+    String &operator += (String &obj);
     String &operator = (String &obj);
+    String &operator + (String &obj);
 
     int *table();
     int bm_search(String word);
@@ -34,18 +35,19 @@ ostream & operator << (ostream &os, const String &obj)
     return os;
 }
 
-String :: String()
-{
-    line = nullptr;
-    len = 0;
-}
+// String :: String(int a=0)// I don't know why, but when I write line_len=0, it's an error
+// {
+//     len = a;
+//     line = new char [len+1];
+//     line[len] = 0;
+// }
 
 String :: String(char *arr)
 {
     int arr_len = strlen(arr);
     len = arr_len;
-    line = new char [len+1]; // may be error cause len+1 }} change to len
-    line[len] = '\n';
+    line = new char [len+1];
+    line[len] = 0;
     for(int i=0; i<len; i++)
     {
         line[i] = arr[i];
@@ -61,7 +63,7 @@ String :: String(const String &obj)
 {
     len = obj.len;
     line = new char [len+1];
-    line[len] = '\n';
+    line[len] = 0;
     for(int i=0; i<len; i++)
     {
         line[i] = obj.line[i];
@@ -73,7 +75,7 @@ char& String ::operator [] (int pos)
     return line[pos];
 }
 
-String& String :: operator + (String &obj)
+String& String :: operator += (String &obj)
 {
     char *space = new char [len];
     for(int i=0; i<len; i++)
@@ -83,7 +85,7 @@ String& String :: operator + (String &obj)
     int new_len = len+obj.len;
     delete[] line;
     line = new char [new_len];
-    line[new_len] = '\n';
+    line[new_len] = 0;
     for(int i=0; i<len; i++)
     {
         line[i] = space[i];
@@ -103,10 +105,14 @@ String& String :: operator + (String &obj)
 
 String& String :: operator = (String &obj)
 {
+    if(this==&obj)
+    {
+        return *this;
+    }
     delete[] line;
     len = obj.len;
     line = new char [len+1];
-    line[len] = '\n';
+    line[len] = 0;
     for(int i=0; i<len; i++)
     {
         line[i] = obj.line[i];
@@ -114,125 +120,130 @@ String& String :: operator = (String &obj)
     return *this;
 }
 
-int* String :: table() 
-{
-    int *mass= new int [len];
+// String& String :: operator + (String &obj)
+// {
+//     int new_len = obj.len + len;
+//     String space = new_len;
+//     for(int i=0; i<len; i++)
+//     {
+//         space.line[i] = line[i];
+//     }
+//     for(int i=len, j=0; i<new_len; i++, j++)
+//     {
+//         space.line[i] = line[j];
+//     }
+//     return space;
+// }
 
-    for(int i=1; i<len; i++)
+int* String :: table()
+{
+    int *table = new int [256];
+    for(int i=0; i<256; i++)
     {
-        mass[len-i-1]=i;
-        for(int j=len-i; j<len-1; j++)
-        {
-            if(line[len-i-1]==line[j] && i!=1) mass[len-i-1]=mass[len-i];
-        }
+        table[i] = len;
     }
     for(int i=0; i<len-1; i++)
     {
-        if(line[i]==line[len-1])
-        {
-            mass[len-1]=mass[i];
-            break;
-        }
-        else mass[len-1]=1 + mass[0];
+        table[line[i]] = len - i - 1;
     }
 
-    return mass;
+    return table;
 }
 
 int String :: bm_search(String word)
 {
-    int *tablew = word.table();
-    int space = 0;
-    for(int i=word.len-1; i<=len; )
+    int i=word.len-1, j=word.len-1, k=0;
+    int *bm_table = word.table();
+    while(i<len)
     {
-        for(int j=1; j<word.len; j++){
-            if(line[i-j+1]!=word[word.len-j])
+        if(j<0)
+        {
+            return i+1-word.len;
+        }
+        k = i;
+        j = word.len-1;
+        while(j>=0)
+        {
+            if(line[k]==word.line[j])
             {
-                int t=0;
-                for(int k=0; k<word.len; k++)
-                {
-                    if(line[i-j+1]==word[k])
-                    {
-                        t = tablew[k];
-                        break;
-                    }
-                    else t=0;
-                }
-                if(t) 
-                {
-                    i = i + t;
-                    break;
-                }
-                else i = i+word.len-1;
-                break;
+                j--;
+                k--;
             }
-            else if((word.len-j-1)==0)
+            else
             {
-                space = i-word.len+1;
-                return space;
+                i = i+bm_table[line[i]];
+                j = word.len-1;
+                break;
             }
         }
     }
-    return space;
+    return -1;
 }
 
 int* String :: table_kmp()
 {
-    int *arr = new int [len];
-    arr[0] = 0;
-    int length = 0;
-    int i = 1;
-    while (i < len) 
+    int *table = new int [len];
+    table[0] = -1;
+    int j=0, k=-1;
+    while(j<len-1)
     {
-        if (line[i] == line[length]) 
+        while(1)
         {
-            length++;
-            arr[i] = length;
-            i++;
-        } 
-        else 
-        {
-            if(length != 0)
+            if((k>=0)&&(line[j]!=line[k]))
             {
-                length = arr[length - 1];
+                k = table[k];
             }
-            else 
+            else
             {
-                arr[i] = 0;
-                i++;
+                k++;
+                j++;
+                if(line[j] == line[k])
+                {
+                    table[j] = table[k];
+                }
+                else
+                {
+                    table[j] = k;
+                }
+                break;
             }
         }
     }
-    return arr;
+
+    return table;
+
 }
 
 int String :: kmp_search (String word)
 {
-   int *table = word.table_kmp();
-   int i = 0;
-   int j = 0;
-   while (i < len) 
-   {
-        if (word.line[j] == line[i]) 
+    int *table = word.table_kmp();
+    int i=0, j=0;
+    while(j<word.len)
+    {
+        if(i>len)
         {
-            j++;
-            i++;
+            return -1;// there's no any members
         }
-        if (j == word.len) 
+        while(1)
         {
-            return i-j;
-        }
-        else if (i < len && word.line[j] != line[i]) 
-        {
-            if (j != 0)
-            j = table[j - 1];
+            if((j>=0)&&(line[i]!=word.line[j]))
+            {
+                j = table[j];
+            }
             else
-            i = i + 1;
+            {
+                i++;
+                j++;
+                break;
+            }
         }
-   }
 
-   return 0;
+    }
+
+
+    return i-word.len;
 }
+
 
 int main()
 {
@@ -243,8 +254,9 @@ int main()
     String arr_1 = a;
     String arr_2 = b;
 
-//  Example for bm_search();
+//  Example for bm_search
 
+    // int* bm_table = arr_2.table();
     // int pos = arr_1.bm_search(arr_2);
     // for(int i=0; i<strlen(b); i++)
     // {
@@ -252,12 +264,14 @@ int main()
     // }
     // cout<<arr_1<<endl;
 
-//  Example for kmp_search();
+//  Example for kmp_search
 
-    // int position = arr_1.kmp_search(arr_2);
+    // int *kmp_table = arr_2.table_kmp();
+    // int pos_kmp = arr_1.kmp_search(arr_2);
+    // cout<<pos_kmp<<endl;
     // for(int i=0; i<strlen(b); i++)
     // {
-    //     arr_1[position+i] = ' ';
+    //     arr_1[pos_kmp+i] = ' ';
     // }
     // cout<<arr_1<<endl;
 
