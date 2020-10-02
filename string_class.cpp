@@ -8,7 +8,7 @@ class String
     char *line;
     int len;
 public:
-    // String(int a=0);
+    // String(int a = 0);
     String(char *arr);
     String(const String &obj);
    ~String();
@@ -17,6 +17,7 @@ public:
     String &operator += (String &obj);
     String &operator = (String &obj);
     String &operator + (String &obj);
+    bool operator == (String &obj);
 
     int *table();
     int bm_search(String word);
@@ -35,7 +36,7 @@ ostream & operator << (ostream &os, const String &obj)
     return os;
 }
 
-// String :: String(int a=0)// I don't know why, but when I write line_len=0, it's an error
+// String :: String(int a=0)
 // {
 //     len = a;
 //     line = new char [len+1];
@@ -123,7 +124,7 @@ String& String :: operator = (String &obj)
 // String& String :: operator + (String &obj)
 // {
 //     int new_len = obj.len + len;
-//     String space = new_len;
+//     String space(new_len);
 //     for(int i=0; i<len; i++)
 //     {
 //         space.line[i] = line[i];
@@ -244,6 +245,16 @@ int String :: kmp_search (String word)
     return i-word.len;
 }
 
+bool String :: operator == (String &obj)
+{
+    if(obj.len != len ) return false;
+    for(int i=0; i<len; i++)
+    {
+        if(line[i]!=obj.line[i]) return false;
+    }
+    return true;
+}
+
 
 int main()
 {
@@ -274,6 +285,8 @@ int main()
     //     arr_1[pos_kmp+i] = ' ';
     // }
     // cout<<arr_1<<endl;
+
+    
 
     return 0;
 }
