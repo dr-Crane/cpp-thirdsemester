@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cmath>
+#include <ctime>
 
 using namespace std;
 
@@ -18,6 +19,7 @@ public:
     bool operator == (Array &obj);
 
     bool test_increment();
+    void shells_sort();
 
     friend istream &operator >> (istream &is, Array &obj);
     friend ostream &operator << (ostream &os, Array &obj);
@@ -29,6 +31,7 @@ ostream &operator << (ostream &os, Array &obj)
     {
         os<<obj.line[i]<<"  ";
     }
+    
     return os;
 }
 
@@ -127,6 +130,44 @@ bool Array :: test_increment()
     return true;
 }
 
+void Array :: shells_sort()
+{
+    clock_t start = clock();
+    int len_table = log2(len);
+    int *table = new int [len_table+1];
+    table[len_table] = 0;
+    for(int i=0; i<len_table; i++)
+    {
+        table[i] = pow(2, i) - 1;
+    }
+    for(int i=0; i<= len_table; i++)
+    {
+        int s = table[i];
+        int b = 0;
+        while(b<s)
+        {
+            int j = b+s;
+            while (j<len)
+            {
+                int x = line[j];
+                int k = j-s;
+                while (k>=0&&line[k]>x)
+                {
+                    line[s+k] = line[k];
+                    k = k-s;
+                }
+                line[k+s] = x;
+                j = j+s;
+            }
+            b++;
+        }
+    }
+    clock_t end = clock();
+    double time = (double)(end-start)/CLOCKS_PER_SEC;
+    cout<<"Time = "<< time<<endl;
+    delete[] table;
+}
+
 
 
 int main()
@@ -135,8 +176,7 @@ int main()
     
     Array test_1(a, 8);
     
-    
-
+    test_1.shells_sort();
     cout<<test_1<<endl;
     
 
