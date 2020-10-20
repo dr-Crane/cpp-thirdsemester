@@ -8,7 +8,7 @@ class String
     char *line;
     int len;
 public:
-    // String(int a = 0);
+    String(int a = 0);
     String(char *arr);
     String(const String &obj);
    ~String();
@@ -16,13 +16,15 @@ public:
     char &operator [] (int pos);
     String &operator += (String &obj);
     String &operator = (String &obj);
-    String &operator + (String &obj);
+    String operator + (String &obj);
     bool operator == (String &obj);
+    bool operator != (String &obj);
 
     int *table();
     int bm_search(String word);
     int kmp_search (String word);
     int *table_kmp();
+    int remove_word(String &word, int pos);
 
     friend ostream & operator << (ostream &os, const String &obj);
 };
@@ -36,12 +38,12 @@ ostream & operator << (ostream &os, const String &obj)
     return os;
 }
 
-// String :: String(int a=0)
-// {
-//     len = a;
-//     line = new char [len+1];
-//     line[len] = 0;
-// }
+String :: String(int a)
+{
+    len = a;
+    line = new char [len+1];
+    line[0] = 0;
+}
 
 String :: String(char *arr)
 {
@@ -121,20 +123,22 @@ String& String :: operator = (String &obj)
     return *this;
 }
 
-// String& String :: operator + (String &obj)
-// {
-//     int new_len = obj.len + len;
-//     String space(new_len);
-//     for(int i=0; i<len; i++)
-//     {
-//         space.line[i] = line[i];
-//     }
-//     for(int i=len, j=0; i<new_len; i++, j++)
-//     {
-//         space.line[i] = line[j];
-//     }
-//     return space;
-// }
+String String :: operator + (String &obj)
+{
+    int new_len = obj.len + len;
+    String space(new_len);
+    space.len = new_len;
+    space.line[new_len] = 0;
+    for(int i=0; i<len; i++)
+    {
+        space.line[i] = line[i];
+    }
+    for(int i=len, j=0; i<new_len; i++, j++)
+    {
+        space.line[i] = obj.line[j];
+    }
+    return space;
+}
 
 int* String :: table()
 {
@@ -255,6 +259,16 @@ bool String :: operator == (String &obj)
     return true;
 }
 
+bool String :: operator != (String &obj)
+{
+    if(obj.len != len ) return true;
+    for(int i=0; i<len; i++)
+    {
+        if(line[i]!=obj.line[i]) return true;
+    }
+    return false;
+}
+
 
 int main()
 {
@@ -267,7 +281,6 @@ int main()
 
 //  Example for bm_search
 
-    // int* bm_table = arr_2.table();
     // int pos = arr_1.bm_search(arr_2);
     // for(int i=0; i<strlen(b); i++)
     // {
@@ -277,16 +290,13 @@ int main()
 
 //  Example for kmp_search
 
-    // int *kmp_table = arr_2.table_kmp();
     // int pos_kmp = arr_1.kmp_search(arr_2);
-    // cout<<pos_kmp<<endl;
     // for(int i=0; i<strlen(b); i++)
     // {
     //     arr_1[pos_kmp+i] = ' ';
     // }
     // cout<<arr_1<<endl;
 
-    
 
     return 0;
 }
