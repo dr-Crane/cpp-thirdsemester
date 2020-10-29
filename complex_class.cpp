@@ -59,6 +59,22 @@ public:
         result.im = im - obj.im;
         return result;
     }
+// Operator -=
+    void operator -= (const complex &obj)
+    {
+        re = re-obj.re;
+        im = im-obj.im;
+    }
+    bool operator == (const complex &obj)
+    {
+        if((re==obj.re)&&(im==obj.im)) return true;
+        else return false;
+    }
+    bool operator != (const complex &obj)
+    {
+        if((re==obj.re)&&(im==obj.im)) return false;
+        else return true;
+    }
 //  Operator *
     complex operator * (const complex &obj)
     {
@@ -81,12 +97,6 @@ ostream &operator << (ostream &os, const complex &obj)
     return os;
 }
 
-istream &operator >> (istream &is, const complex &obj)
-{
-    is >> obj.re;
-    is >> obj.im;
-    return is;
-}
 
 int main()
 {
