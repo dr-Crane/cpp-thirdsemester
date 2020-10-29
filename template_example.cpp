@@ -62,7 +62,7 @@ template <typename T>
 void Stack<T>::printStack()
 {
     for (int i = size - 1; i >= 0; i--)
-        cout << "|" << setw(4) << stackPtr[i] << endl;
+        cout << "|" << "    " << stackPtr[i] << endl;
 }
 
 int main()
@@ -70,7 +70,7 @@ int main()
     Stack <int> myStack(5);
  
     // заполняем стек
-    cout << "Push elements in stack :";
+    cout << "Push elements in stack :\n";
     int current = 0;
     while (current++ != 5)
     {
@@ -78,7 +78,7 @@ int main()
         cin >> temp;
         myStack.push(temp);
     }
- 
+    cout<<"\n\n";
     myStack.printStack(); // вывод стека на экран
  
     cout << "\nRemove them :\n";
@@ -89,6 +89,3 @@ int main()
  
     return 0;
 }
- 
-
- 
