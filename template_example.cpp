@@ -1,8 +1,7 @@
 #include <iostream>
- 
+#include <cstring>
+
 using namespace std;
- 
-#include <iomanip>
  
 template <typename T>
 class Stack
@@ -23,8 +22,8 @@ public:
 template <typename T>
 Stack<T>::Stack(int s)
 {
-    size = s > 0 ? s: 10;   // инициализировать размер стека
-    stackPtr = new T[size]; // выделить память под стек
+    size = s;
+    stackPtr = new T[size]; 
     top = -1; // значение -1 говорит о том, что стек пуст
 }
  
@@ -32,12 +31,9 @@ Stack<T>::Stack(int s)
 template <typename T>
 Stack<T>::~Stack()
 {
-    delete [] stackPtr; // удаляем стек
+    delete [] stackPtr; 
 }
  
-// элемент функция класса  Stack для помещения элемента в стек
-// возвращаемое значение - true, операция успешно завершена
-//                                    false, элемент в стек не добавлен
 template <typename T>
 bool Stack<T>::push(const T value)
 {
@@ -45,14 +41,11 @@ bool Stack<T>::push(const T value)
         return false; // стек полон
  
     top++;
-    stackPtr[top] = value; // помещаем элемент в стек
+    stackPtr[top] = value; 
  
-    return true; // успешное выполнение операции
+    return true; 
 }
  
-// элемент функция класса  Stack для удаления элемента из стек
-// возвращаемое значение - true, операция успешно завершена
-//                                    false, стек пуст
 template <typename T>
 bool Stack<T>::pop()
 {
@@ -64,14 +57,22 @@ bool Stack<T>::pop()
  
     return true; // успешное выполнение операции
 }
+
+template <typename T>
+void Stack<T>::printStack()
+{
+    for (int i = size - 1; i >= 0; i--)
+        cout << "|" << setw(4) << stackPtr[i] << endl;
+}
+
 int main()
 {
     Stack <int> myStack(5);
  
     // заполняем стек
-    cout << "Заталкиваем элементы в стек: ";
-    int ct = 0;
-    while (ct++ != 5)
+    cout << "Push elements in stack :";
+    int current = 0;
+    while (current++ != 5)
     {
         int temp;
         cin >> temp;
@@ -80,7 +81,7 @@ int main()
  
     myStack.printStack(); // вывод стека на экран
  
-    cout << "\nУдаляем два элемента из стека:\n";
+    cout << "\nRemove them :\n";
  
     myStack.pop(); // удаляем элемент из стека
     myStack.pop(); // удаляем элемент из стека
