@@ -5,17 +5,17 @@ using namespace std;
 struct Trailer;
 struct Lider
 {
-    int key;//   Номер вершины
-    int count;//   (     ) Число предшественников число входящих дуг
-    Lider   *nx;//             (Lider) Указатель на следующий элемент в списке вершин
-    Trailer *tr;//     RAILER (       ,    указатель на Т список указателей на вершины к
-которым ведут исходящие дуги       )
+    int key;        //   Номер вершины
+    int count;      //   (     ) Число предшественников число входящих дуг
+    Lider   *nx;    //             (Lider) Указатель на следующий элемент в списке вершин
+    Trailer *tr;    //     RAILER (       ,    указатель на Т список указателей на вершины к
+                    //которым ведут исходящие дуги       )
 };
 struct Trailer
 {
-    Lider   *ld;//           LEADER,      указатель на вершину в списке к которой ведет
-                //        ,       TRAILER исходящая дуга из вершины к которой прикреплен
-    Trailer *nx;//       указатель на следующий элемент
+    Lider   *ld;    //           LEADER,      указатель на вершину в списке к которой ведет
+                    //        ,       TRAILER исходящая дуга из вершины к которой прикреплен
+    Trailer *nx;    //       указатель на следующий элемент
 };
 /*
  * AddEdge ­          добавление ребра в граф
@@ -23,48 +23,54 @@ struct Trailer
  * vertexes ­      список вершин графа
  *          (vertexA,vertexB) Ребро графа определяется парой вершин
   */
-void AddEdge(Lider *& vertexes, int vertexA, int vertexB){
+
+
+void AddEdge(Lider *& vertexes, int vertexA, int vertexB)
+{
     Lider *ptrA = NULL, *ptrB=NULL;
-    for(ptrA = vertexes;ptrA && ptrA­>key!= vertexA;ptrA = ptrA­>nx);
-    for(ptrB = vertexes;ptrB && ptrB­>key!= vertexB;ptrB = ptrB­>nx);
+    for(ptrA = vertexes;ptrA && ptrA->key!= vertexA; ptrA = ptrA->nx);
+    for(ptrB = vertexes;ptrB && ptrB->key!= vertexB;ptrB = ptrB->nx);
     bool setEdge = true;
     if(ptrA && ptrB){
-     Trailer * trTmp = ptrA­>tr;
-     for(Trailer * trTmp = ptrA­>tr;trTmp && trTmp­>ld!=ptrB;trTmp = trTmp­>nx);
+     Trailer * trTmp = ptrA->tr;
+     for(Trailer * trTmp = ptrA->tr;trTmp && trTmp->ld!=ptrB;trTmp = trTmp->nx);
         setEdge = (bool)trTmp;
     }
     else{
         //     ,         vertexes Создаем вершину А добавляем в голову списка
      if(!ptrA){
          ptrA = new Lider;
-         ptrA­>key = vertexA;
-         ptrA­>count = 0;
-         ptrA­>nx = NULL;
-         ptrA­>tr = NULL;
+         ptrA->key = vertexA;
+         ptrA->count = 0;
+         ptrA->nx = NULL;
+         ptrA->tr = NULL;
          
-         ptrA­>nx = vertexes;
+         ptrA->nx = vertexes;
          vertexes = ptrA;
     }
      //    B ,         vertexes Создаем вершину добавляем в голову списка
      if(!ptrB){
          ptrB = new Lider;
-         ptrB­>key = vertexB;
-         ptrB­>count = 0;
-         ptrB­>nx = NULL;
-         ptrB­>tr = NULL;
-         ptrB­>nx = vertexes;
+         ptrB->key = vertexB;
+         ptrB->count = 0;
+         ptrB->nx = NULL;
+         ptrB->tr = NULL;
+         ptrB->nx = vertexes;
          vertexes = ptrB;}
       
     }
      //     Устанавливаем ребро
     if(setEdge){
-        ptrB­>count++;
+        ptrB->count++;
         Trailer* elemTr = new Trailer;
-        elemTr­>ld = ptrB;
-        elemTr­>nx = ptrA­>tr;
-        ptrA­>tr = elemTr;            
+        elemTr->ld = ptrB;
+        elemTr->nx = ptrA->tr;
+        ptrA->tr = elemTr;            
     }
 }
+
+
+
 /*
  * PrintGraph ­    Вывод графа
  *    : Входные параметры
@@ -76,12 +82,12 @@ void PrintGraph(Lider*vertexes){
         printf("Graph is Empty");
     else
     while(vertexes){
-        Trailer* trTmp = vertexes­>tr;
+        Trailer* trTmp = vertexes->tr;
         while(trTmp){
-            printf("(%d,%d)\n",vertexes­>key,trTmp­>ld­>key);
-            trTmp = trTmp­>nx;
+            printf("(%d,%d)\n",vertexes->key,trTmp->ld->key);
+            trTmp = trTmp->nx;
         }
-        vertexes = vertexes­>nx;
+        vertexes = vertexes->nx;
     }
 }
 /*
@@ -92,13 +98,13 @@ void PrintGraph(Lider*vertexes){
  */
 void DeleteGraph(Lider*&vertexes){
     while(vertexes){
-        while(vertexes­>tr){
-        Trailer*tmp = vertexes­>tr;    
-        vertexes­>tr = vertexes­>tr­>nx;
+        while(vertexes->tr){
+        Trailer*tmp = vertexes->tr;    
+        vertexes->tr = vertexes->tr->nx;
         delete tmp;
         }
         Lider*tmp = vertexes;
-        vertexes = vertexes­>nx;
+        vertexes = vertexes->nx;
         delete tmp;
     }
     
@@ -115,24 +121,24 @@ void DeleteGraph(Lider*&vertexes){
  */
 bool ExcludeEdge(Lider *& vertexes, int vertexA, int vertexB){
     Lider *ptrA = NULL, *ptrB=NULL;
-    for(ptrA = vertexes;ptrA && ptrA­>key!= vertexA;ptrA = ptrA­>nx);
-    for(ptrB = vertexes;ptrB && ptrB­>key!= vertexB;ptrB = ptrB­>nx);
-    if(ptrA && ptrA­>tr && ptrB){
-        if(ptrA­>tr­>ld == ptrB){
-            Trailer * t = ptrA­>tr;
-            ptrA­>tr = ptrA­>tr­>nx;
+    for(ptrA = vertexes;ptrA && ptrA->key != vertexA;ptrA = ptrA->nx);
+    for(ptrB = vertexes;ptrB && ptrB->key!= vertexB;ptrB = ptrB->nx);
+    if(ptrA && ptrA->tr && ptrB){
+        if(ptrA->tr->ld == ptrB){
+            Trailer * t = ptrA->tr;
+            ptrA->tr = ptrA->tr->nx;
             delete t;
-            ptrB­>count­­;
+            ptrB->count--;
            
         } 
      else{
      Trailer * trTmp;
-     for(trTmp = ptrA­>tr;trTmp­>nx && trTmp­>nx­>ld!=ptrB;trTmp = trTmp­>nx);
-        if(trTmp­>nx){
-           Trailer * t = trTmp­>nx;
-           trTmp­>nx = trTmp­>nx­>nx;
+     for(trTmp = ptrA->tr;trTmp->nx && trTmp->nx->ld!=ptrB;trTmp = trTmp->nx);
+        if(trTmp->nx){
+           Trailer * t = trTmp->nx;
+           trTmp->nx = trTmp->nx->nx;
            delete t;
-           ptrB­>count­­;
+           ptrB->count--;
          }
     }
         return true;
