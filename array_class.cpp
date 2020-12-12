@@ -148,8 +148,9 @@ bool Array :: operator == (Array &obj)
                 num--;
                 break;
             }
+            if(j==num) return false;
         }
-        if(j==num) return false;
+        
     }
 
     return true;
@@ -360,24 +361,30 @@ void Array :: byte_sort()
 
 void rec_for_heap(int *line, int len, int pos)
 {
-    int biggest = pos;
-    // l-левый последователь, r-правый, biggest- корень
-    int l = 2*pos+1;
-    int r = 2*pos+2;
 
-    if((l<len) && (line[l]>line[biggest])) biggest = l; // На случай, если левый последователь больше корня
-    if((r<len) && (line[r]>line[biggest])) biggest = r; // если правый
+    int j = 2*pos+1;
+    int x = line[pos];
+    int f = 1;
 
-    if(pos!=biggest)
+    while(f&&(j<len))
     {
-        int num = line[biggest];
-        line[biggest] = line[pos];
-        line[pos] = num;
+        if(((j+1)<len)&&(line[j+1]>line[j]))
+        {
+            j = j+1;
+        }
+        if(line[j]>x)
+        {
+            line[pos] = line[j];
+            pos = j;
+            j = 2*pos + 1;
+        }
+        else
+        {
+            f=0;
+        }
         
-        print_line(line, len);
-
-        rec_for_heap(line, len, biggest);
     }
+    line[pos] = x;
 
 }
 
@@ -405,7 +412,7 @@ void Array :: heap_sort()
 int main()
 {
     Array test(10, 1, 10);
-    cout<<test<<endl;
+    // cout<<test<<endl;
     Array test_2 = test;
     
     clock_t start = clock();
@@ -413,7 +420,7 @@ int main()
     clock_t end = clock();
     double time = (double)(end-start)/CLOCKS_PER_SEC;
     cout<<"Time = "<< time<<endl;
-    if(test.test_increment()) cout<<"Ok"<<endl;
+    if((test.test_increment())&&(test == test_2)) cout<<"Ok"<<endl;
     else cout<<"Error"<<endl;
 
     // clock_t start = clock();
