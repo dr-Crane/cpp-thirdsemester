@@ -45,8 +45,7 @@ istream &operator >> (istream &is, Array &obj)
     is>>obj.len;
     cout<<"Members = "<<endl;
     delete[] obj.line;
-    obj.line = new int [obj.len+1];
-    obj.line[obj.len] = 0;
+    obj.line = new int [obj.len];
     for(int i=0; i< obj.len; i++)
     {
         is>>obj.line[i];
@@ -57,8 +56,7 @@ istream &operator >> (istream &is, Array &obj)
 Array :: Array(int amount, int type, int area)
 {
     len = amount;
-    line = new int [len+1];
-    line[len] = 0;
+    line = new int [len];
     if(type == 1)
     {
         for(int i=0; i<len; i++)
@@ -72,25 +70,16 @@ Array :: Array(int amount, int type, int area)
         line[0]=rand() % 10;
         for(int i=1; i<len; i++)
         {
-            while(line[i-1]>line[i])
-            {
-                line[i]=rand() % space;
-            }
-            space++;
+            line[i] = line[i-1] + rand() % area;
         }
     }
     if(type==3)
     {
         int space = 100;
-        line[0]=rand() % 100;
-        for(int i=1; i<len; i++)
+        line[len-1]=rand() % 100;
+        for(int i=len-2; i>=0; i--)
         {
-            do
-            {
-                line[i] = rand() % space;
-            } while (line[i-1]<line[i]);
-            
-            if(space>10) space--;
+            line[i] = line[i+1] + rand() % area;
         }
     }
 }
@@ -103,8 +92,7 @@ Array :: ~Array()
 Array :: Array(const Array& obj)
 {
     len = obj.len;
-    line = new int [len+1];
-    line[len] = 0;
+    line = new int [len];
     for(int i=0; i<len; i++)
     {
         line[i] = obj.line[i];
@@ -114,8 +102,7 @@ Array :: Array(const Array& obj)
 Array :: Array(int *a, int b)
 {
     len = b;
-    line = new int [len+1];
-    line[len] = 0;
+    line = new int [len];
     for(int i=0; i<len; i++)
     {
         line[i] = a[i];
@@ -127,31 +114,47 @@ Array& Array :: operator = (Array &obj)
     if(this == &obj) return *this;
     delete[] line;
     len = obj.len;
-    line = new int [len+1];
-    line[len] = 0;
+    line = new int [len];
     for(int i=0; i<len ; i++)
     {
         line[i] = obj.line[i];
     }
     
     return *this;
-
 }
 
 int& Array :: operator [] (int pos)
 {
+    if(pos>=len || pos<0)
+    {
+        cout<<"error"<<endl;
+        exit(0);    
+    }
     return line[pos];
 }
 
 bool Array :: operator == (Array &obj)
 {
     if(obj.len!=len) return false;
-    for(int i=0; i<len; i++)
+    int num = obj.len;
+    int j = 0;
+    for(int i=0; i<this->len; i++)
     {
-        if(obj.line[i]!=line[i]) return false;
+        for(j = 0; j<num; j++)
+        {
+            if(line[i]==obj.line[j])
+            {
+                swap(obj.line[j], obj.line[num-1]);
+                num--;
+                break;
+            }
+        }
+        if(j==num) return false;
     }
 
     return true;
+
+
 }
 
 bool Array :: test_increment()
@@ -175,15 +178,16 @@ void print_line(int *line, int len)
 
 void Array :: shells_sort()
 {
-    clock_t start = clock();
     int len_table = log2(len);
-    int *table = new int [len_table+1];
-    table[len_table] = 0;
-    for(int i=0; i<len_table; i++)
+    int *table = new int [len_table];
+    for(int i=1; i<len_table; i++)
     {
-        table[i] = pow(2, i) - 1;
+        table[len_table-i-1] = pow(2, i) - 1;
     }
-    for(int i=0; i<= len_table; i++)
+    
+    print_line(table, len_table);
+
+    for(int i=0; i < len_table - 1 ; i++)
     {
         int s = table[i];
         int b = 0;
@@ -204,16 +208,17 @@ void Array :: shells_sort()
             }
             b++;
         }
+
+        cout<<s<<endl;
+        print_line(line, len);
+
     }
-    clock_t end = clock();
-    double time = (double)(end-start)/CLOCKS_PER_SEC;
-    cout<<"Time = "<< time<<endl;
+
     delete[] table;
 }
 
 void Array :: shaker_sort()
 {
-    clock_t start = clock();
     int left = 0, right = len-1; 
     int last_right = left,  last_left = right;
 
@@ -221,6 +226,7 @@ void Array :: shaker_sort()
     {
         int space = 0;
         int i=left;
+        last_right = left;
         while(i<right)
         {
             if(line[i]>line[i+1])
@@ -235,6 +241,7 @@ void Array :: shaker_sort()
         right = last_right;
 
         int j=right;
+        last_left = right;
         while(j>left)
         {
             if(line[j]<line[j-1])
@@ -247,12 +254,11 @@ void Array :: shaker_sort()
             j--;
         }
         left = last_left;
-        if((left+1)==right) break;
+
+        print_line(line, len);
+        cout<<left<<"  "<<right<<endl;
 
     }
-
-    clock_t end = clock();
-    double time = (double)(end-start)/CLOCKS_PER_SEC;
     cout<<"Time = "<< time<<endl;
 
 }
@@ -265,8 +271,14 @@ void rec_for_hoares(int *line, int left, int right)
 
     while(i<=j)
     {
-        while(line[i]<x) i++;
-        while(line[j]>x) j--;
+        while(line[i]<x) 
+        {
+            i++;
+        }
+        while(line[j]>x) 
+        {
+            j--;
+        }
         if(i<=j)
         {
             int space = line[i];
@@ -277,17 +289,18 @@ void rec_for_hoares(int *line, int left, int right)
         }
     }
 
+    cout<<x<<"   "<<j<<endl;
+    print_line(line, 10);
+
     rec_for_hoares(line, left, j);
     rec_for_hoares(line, i, right);
 }
 
 void Array :: hoares_sort()
 {
-    clock_t start = clock();
+    
     rec_for_hoares(line, 0, len-1);
-    clock_t end = clock();
-    double time = (double)(end-start)/CLOCKS_PER_SEC;
-    cout<<"Time = "<< time<<endl;
+    
 }
 
 void rec_for_byte(int* line, int left, int right, int k)
@@ -312,6 +325,12 @@ void rec_for_byte(int* line, int left, int right, int k)
         }
     }
 
+
+    cout<<k<<"   "<<j<<endl;
+    print_line(line, 10);
+
+
+
     int new_k = k-1;
     rec_for_byte(line, left, j, new_k);
     rec_for_byte(line, i, right, new_k);
@@ -320,7 +339,7 @@ void rec_for_byte(int* line, int left, int right, int k)
 
 void Array :: byte_sort()
 {
-    clock_t start = clock();
+    
     int max = 0, k = 31;
     for(int i=0; i<len; i++)
     {
@@ -336,9 +355,7 @@ void Array :: byte_sort()
     }
 
     rec_for_byte(line, 0, len-1, k);
-    clock_t end = clock();
-    double time = (double)(end-start)/CLOCKS_PER_SEC;
-    cout<<"Time = "<< time<<endl;
+    
 }
 
 void rec_for_heap(int *line, int len, int pos)
@@ -357,7 +374,7 @@ void rec_for_heap(int *line, int len, int pos)
         line[biggest] = line[pos];
         line[pos] = num;
         
-        // print_line(line, len);
+        print_line(line, len);
 
         rec_for_heap(line, len, biggest);
     }
@@ -366,13 +383,16 @@ void rec_for_heap(int *line, int len, int pos)
 
 void Array :: heap_sort()
 {
-    clock_t start = clock();
+
+    //  0 2 1 2 3 3 5 5
 
     for(int i=(len/2-1); i>=0; i--)
     {
         rec_for_heap(line, len, i);
     }
+
     int num = 0;
+
     for(int i=len-1; i>=0; i--)
     {
         num = line[i];
@@ -380,36 +400,51 @@ void Array :: heap_sort()
         line[0] = num;
         rec_for_heap(line, i, 0); // Используем рекурсию на уменьшенной куче
     }
-
-    clock_t end = clock();
-    double time = (double)(end-start)/CLOCKS_PER_SEC;
-    cout<<"Time = "<< time<<endl;
 }
 
 int main()
 {
-    
     Array test(10, 1, 10);
+    cout<<test<<endl;
     Array test_2 = test;
-    // cout<<test<<endl;
-
+    
+    clock_t start = clock();
     test.heap_sort();
+    clock_t end = clock();
+    double time = (double)(end-start)/CLOCKS_PER_SEC;
+    cout<<"Time = "<< time<<endl;
     if(test.test_increment()) cout<<"Ok"<<endl;
     else cout<<"Error"<<endl;
 
+    // clock_t start = clock();
     // test_2.byte_sort();
+    // clock_t end = clock();
+    // double time = (double)(end-start)/CLOCKS_PER_SEC;
+    // cout<<"Time = "<< time<<endl;
     // if(test_2.test_increment()) cout<<"Ok"<<endl;
     // else cout<<"Error"<<endl;
 
+    // clock_t start = clock();
     // test.hoares_sort();
+    // clock_t end = clock();
+    // double time = (double)(end-start)/CLOCKS_PER_SEC;
+    // cout<<"Time = "<< time<<endl;
     // if(test.test_increment()) cout<<"Ok"<<endl;
     // else cout<<"Error"<<endl;
 
+    // clock_t start = clock();
     // test.shaker_sort();
+    // clock_t end = clock();
+    // double time = (double)(end-start)/CLOCKS_PER_SEC;
+    // cout<<"Time = "<< time<<endl;
     // if(test.test_increment()) cout<<"Ok"<<endl;
     // else cout<<"Error"<<endl;
 
+    // clock_t start = clock();
     // test_2.shells_sort();
+    // clock_t end = clock();
+    // double time = (double)(end-start)/CLOCKS_PER_SEC;
+    // cout<<"Time = "<< time<<endl;
     // if(test_2.test_increment()) cout<<"Ok"<<endl;
     // else cout<<"Error"<<endl;
     
