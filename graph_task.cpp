@@ -1,6 +1,8 @@
 #include <iostream>
 
 using namespace std;
+struct trailer;
+
 
 struct leader
 {
@@ -54,4 +56,6 @@ bool circle_exist (leader *vx, leader *vy, leader *vz)
 int main()
 {
     
+    
+
 }
