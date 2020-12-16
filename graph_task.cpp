@@ -32,7 +32,7 @@ bool circle_exist (leader *vx, leader *vy, leader *vz)
     leader *ptrVY = vy;
     leader *ptrVZ = vz;
 
-    if(ptrVX->st==0||ptrVY->st==0||ptrVZ->st==0)
+    if(ptrVX->st==0&&ptrVY->st==0&&ptrVZ->st==0)
     {
         return false;
     }
