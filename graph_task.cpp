@@ -16,75 +16,36 @@ struct trailer
     trailer *next;
 };
 
-bool circle_exist (leader *& head)
+bool circle_exist (leader *vx, leader *vy, leader *vz)
 {
-    if(!head)
+    if(!vx||!vy||!vz)
     {
-        cout<<"Graph is not exist"<<endl;
+        cout<<"Vertex doesn't exist"<<endl;
         return false;
     }
-    bool chek = true;
-    leader * ptrLD = nullptr, *ptrTMP = head;
-    leader **list;
-    int size = 0;
-    while(ptrTMP)
+
+    bool chek = false;
+
+    leader *ptrVX = vx;
+    leader *ptrVY = vy;
+    leader *ptrVZ = vz;
+
+    if(ptrVX->st==0||ptrVY->st==0||ptrVZ->st==0)
     {
-        size++;
-        ptrTMP->nextlead;
-    }
-    list = new leader* [size];
-    if(!list)
-    {
-        cout<<"Graph is too big"<<endl;
         return false;
     }
-    int count = 0;
-    int x = 0;
-    while(chek)
-    {
-        chek = false;
-        ptrLD = head;
-        while(ptrLD)
-        {
-            if(ptrLD->st == 0) // если нет входящих дуг
-            {
-                ptrLD->st = -1;// вычёркиваем вершину
-                chek = true;
-                list[x] = ptrLD;
-                x++;
-                trailer *ptrTR = ptrLD->list;
-                while(ptrTR)
-                {
-                    ptrTR->vert->st--;
-                    ptrTR = ptrTR->next;
-                }
 
-            }
-            ptrLD = ptrLD->nextlead;
-        }
+    leader *tmp = ptrVX;
+    if(tmp->list->vert->list->vert == ptrVX) return true;
+    if(tmp->list->vert->list->vert->list->vert == ptrVX) return true;
+
+    if(tmp->list->vert->st==2)
+    {
+        if(tmp->list->next->vert == ptrVX) return true;
+        if(tmp->list->next->vert->list->vert == ptrVX) return true;
     }
 
-    count = x;
-    for(x = 0; x<count; x++)
-    {
-        list[x]->st = 0;
-    }
-    for(x = 0; x<count; x++)
-    {
-        trailer *ptrTR = list[x]->list;
-        while(ptrTR)
-        {
-            ptrTR->vert->st++;
-            ptrTR = ptrTR->next;
-        }
-    }
-
-    delete[] list;
-
-    if(size==count) return false;
-    return true;
-
-
+    return false;
 
 }
 
