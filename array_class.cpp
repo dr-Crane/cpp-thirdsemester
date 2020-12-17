@@ -186,7 +186,7 @@ void Array :: shells_sort()
         table[len_table-i-1] = pow(2, i) - 1;
     }
     
-    print_line(table, len_table);
+    // print_line(table, len_table);
 
     for(int i=0; i < len_table - 1 ; i++)
     {
@@ -210,8 +210,8 @@ void Array :: shells_sort()
             b++;
         }
 
-        cout<<s<<endl;
-        print_line(line, len);
+        // cout<<s<<endl;
+        // print_line(line, len);
 
     }
 
@@ -256,11 +256,11 @@ void Array :: shaker_sort()
         }
         left = last_left;
 
-        print_line(line, len);
-        cout<<left<<"  "<<right<<endl;
+        // print_line(line, len);
+        // cout<<left<<"  "<<right<<endl;
 
     }
-    cout<<"Time = "<< time<<endl;
+    // cout<<"Time = "<< time<<endl;
 
 }
 
@@ -290,8 +290,8 @@ void rec_for_hoares(int *line, int left, int right)
         }
     }
 
-    cout<<x<<"   "<<j<<endl;
-    print_line(line, 10);
+    // cout<<x<<"   "<<j<<endl;
+    // print_line(line, 10);
 
     rec_for_hoares(line, left, j);
     rec_for_hoares(line, i, right);
@@ -327,8 +327,8 @@ void rec_for_byte(int* line, int left, int right, int k)
     }
 
 
-    cout<<k<<"   "<<j<<endl;
-    print_line(line, 10);
+    // cout<<k<<"   "<<j<<endl;
+    // print_line(line, 10);
 
 
 
@@ -382,7 +382,6 @@ void rec_for_heap(int *line, int len, int pos)
         {
             f=0;
         }
-        
     }
     line[pos] = x;
 
@@ -398,6 +397,8 @@ void Array :: heap_sort()
         rec_for_heap(line, len, i);
     }
 
+    // print_line(line, 10);
+
     int num = 0;
 
     for(int i=len-1; i>=0; i--)
@@ -407,14 +408,17 @@ void Array :: heap_sort()
         line[0] = num;
         rec_for_heap(line, i, 0); // Используем рекурсию на уменьшенной куче
     }
+
+    // print_line(line, 10);
 }
 
 int main()
 {
-    Array test(10, 1, 10);
+    Array test(100000, 2, 1000);
     // cout<<test<<endl;
     Array test_2 = test;
     
+    cout<<"Pyramid:"<<endl;
     clock_t start = clock();
     test.heap_sort();
     clock_t end = clock();
@@ -423,37 +427,46 @@ int main()
     if((test.test_increment())&&(test == test_2)) cout<<"Ok"<<endl;
     else cout<<"Error"<<endl;
 
-    // clock_t start = clock();
-    // test_2.byte_sort();
-    // clock_t end = clock();
-    // double time = (double)(end-start)/CLOCKS_PER_SEC;
-    // cout<<"Time = "<< time<<endl;
-    // if(test_2.test_increment()) cout<<"Ok"<<endl;
-    // else cout<<"Error"<<endl;
+    cout<<"Byte:"<<endl;
+    test = test_2;
+    start = clock();
+    test.byte_sort();
+    end = clock();
+    time = (double)(end-start)/CLOCKS_PER_SEC;
+    cout<<"Time = "<< time<<endl;
+    if((test.test_increment())&&(test == test_2)) cout<<"Ok"<<endl;
+    else cout<<"Error"<<endl;
 
-    // clock_t start = clock();
-    // test.hoares_sort();
-    // clock_t end = clock();
-    // double time = (double)(end-start)/CLOCKS_PER_SEC;
-    // cout<<"Time = "<< time<<endl;
-    // if(test.test_increment()) cout<<"Ok"<<endl;
-    // else cout<<"Error"<<endl;
 
-    // clock_t start = clock();
-    // test.shaker_sort();
-    // clock_t end = clock();
-    // double time = (double)(end-start)/CLOCKS_PER_SEC;
-    // cout<<"Time = "<< time<<endl;
-    // if(test.test_increment()) cout<<"Ok"<<endl;
-    // else cout<<"Error"<<endl;
+    cout<<"Hoares:"<<endl;
+    test = test_2;
+    start = clock();
+    test.hoares_sort();
+    end = clock();
+    time = (double)(end-start)/CLOCKS_PER_SEC;
+    cout<<"Time = "<< time<<endl;
+    if((test.test_increment())&&(test == test_2)) cout<<"Ok"<<endl;
+    else cout<<"Error"<<endl;
 
-    // clock_t start = clock();
-    // test_2.shells_sort();
-    // clock_t end = clock();
-    // double time = (double)(end-start)/CLOCKS_PER_SEC;
-    // cout<<"Time = "<< time<<endl;
-    // if(test_2.test_increment()) cout<<"Ok"<<endl;
-    // else cout<<"Error"<<endl;
+    cout<<"Shaker:"<<endl;
+    test = test_2;
+    start = clock();
+    test.shaker_sort();
+    end = clock();
+    time = (double)(end-start)/CLOCKS_PER_SEC;
+    cout<<"Time = "<< time<<endl;
+    if((test.test_increment())&&(test == test_2)) cout<<"Ok"<<endl;
+    else cout<<"Error"<<endl;
+
+    cout<<"Shells:"<<endl;
+    test = test_2;
+    start = clock();
+    test.shells_sort();
+    end = clock();
+    time = (double)(end-start)/CLOCKS_PER_SEC;
+    cout<<"Time = "<< time<<endl;
+    if((test.test_increment())&&(test == test_2)) cout<<"Ok"<<endl;
+    else cout<<"Error"<<endl;
     
 
     return 0;
