@@ -67,7 +67,7 @@ bool circle_exist (leader *vx, leader *vy, leader *vz)
                         list_3 = list_3->next;
                     }
                 }
-                    ist_2 = list_2->next;
+                    list_2 = list_2->next;
             }
         }
         list_1 = list_1->next;
