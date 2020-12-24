@@ -315,17 +315,22 @@ void bool_matrix :: topological_sort()
     bool_vec deleter(col);
     bool_vec vec_1(col);
 
+
     cout<<endl<<endl;
 
     int *empty = new  int [row];
+    if(!empty) return ;
+
     for(int i=0; i<row; i++)
     {
         empty[i] = -1;
     }
     int num = 0;
+    int flag = 0;
 
     while(num<col)
     {
+        flag = 0;
         vec_1 = deleter;
         for(int i=0; i<row; i++)
         {
@@ -338,10 +343,16 @@ void bool_matrix :: topological_sort()
             if(cheker(empty, i, row)) continue;
             if(vec_1[i+1])
             {
+                flag = 1;
                 cout<<i+1<<" ";
                 empty[num] = i;
                 num++;
             }
+        }
+        if(flag==0)
+        {
+            cout<<"there's cicle"<<endl;
+            exit(0);
         }
     }
 
@@ -351,7 +362,7 @@ void bool_matrix :: topological_sort()
 
 int main()
 {
-
-    bool_matrix a(7, 7);
+    
+    bool_matrix a(4, 4);
     a.topological_sort();
 }
