@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstring>
 #include <fstream>
+#include <vector>
 
 using namespace std;
 
@@ -12,6 +13,7 @@ class bool_vec
 public:
     bool_vec(int a=1);
     bool_vec(char *str);
+    bool_vec(string str);
     bool_vec(const bool_vec& obj);
     ~bool_vec();
 
@@ -19,6 +21,7 @@ public:
     void set_0 (int pos);
     bool operator [] (int pos);
     bool_vec& operator = (bool_vec obj);
+    void operator = (string str);
     bool_vec operator | (bool_vec obj);
     bool_vec operator ~ ();
     bool operator == (bool_vec obj);
@@ -36,7 +39,7 @@ class bool_matrix
     int col;
 public:
     bool_matrix(int a = 1, int b = 1);
-    bool_matrix(bool_matrix &);
+    bool_matrix(bool_matrix &obj);
 
     bool_vec &operator [] (int pos);
     bool_matrix &operator = (bool_matrix & obj);
@@ -44,6 +47,7 @@ public:
  
 
     friend ostream &operator << (ostream &os, bool_matrix& obj);
+    friend void change_line (string str, int i, bool_matrix &a);
 };
 
 bool_vec& bool_vec :: operator = (bool_vec obj)
@@ -65,6 +69,29 @@ bool_vec :: bool_vec (int a)
     len = a;
     cells = (len-1)/32+1;
     line = new unsigned int [cells];
+}
+
+bool_vec :: bool_vec (string str)
+{
+    len = str.length();
+    cells = (len-1)/32+1;
+    line = new unsigned int [cells];
+    int num = 0;
+
+    for(int i=0; i<cells; i++)
+    {
+        unsigned int mask = 1;
+        mask = mask << 31;
+        for(int j=0; j<32&&(num<len); j++)
+        {
+            if(str[num]!='0') 
+            {
+                line[i] = line[i]|mask;
+            }
+            mask = mask>>1;
+            num++;
+        }
+    }
 }
 
 bool_vec :: ~bool_vec()
@@ -278,11 +305,11 @@ bool_matrix :: bool_matrix (int a, int b)
     col = b;
     line = new bool_vec [row];
 
-    cout<<"Please, fill the matrix:"<<endl;
-    for(int i=0; i<row; i++)
-    {
-        cin>>line[i];
-    }
+    // cout<<"Please, fill the matrix:"<<endl;
+    // for(int i=0; i<row; i++)
+    // {
+    //     cin>>line[i];
+    // }
 }
 
 int bool_vec :: weight ()
@@ -316,7 +343,7 @@ void bool_matrix :: topological_sort()
     bool_vec vec_1(col);
 
 
-    cout<<endl<<endl;
+    cout<<endl;
 
     int *empty = new  int [row];
     if(!empty) return ;
@@ -360,9 +387,65 @@ void bool_matrix :: topological_sort()
 
 }
 
+void bool_vec :: operator = (string str)
+{
+    delete[] line;
+    len = str.length();
+    cells = (len-1)/32+1;
+    line = new unsigned int [cells];
+
+    int num = 0;
+    for(int i=0; i<cells; i++)
+    {
+        unsigned int mask = 1;
+        mask = mask << 31;
+        for(int j=0; j<32&&(num<len); j++)
+        {
+            if(str[num]!='0') 
+            {
+                line[i] = line[i]|mask;
+            }
+            mask = mask>>1;
+            num++;
+        }
+    }
+}
+
+void change_line (string str, int i, bool_matrix &a)
+{
+    a.line[i] = str;
+}
+
 int main()
 {
+    ifstream vec("graph.txt");
+    if(!vec) return -1;
+
+    std:: vector <string> line;
+
+    string str;
+    while(getline(vec, str))
+    {
+        line.push_back(str);
+    }
+
+    str = line[0];
+    bool_matrix a(line.size(), str.length());
+
+    for(int i=0; i<line.size(); i++)
+    {
+        cout<<line[i]<<endl;
+    }
+
+    for(int i=0; i<line.size(); i++)
+    {
+        str = line[i];
+        change_line(str, i, a);
+    }
+
     
-    bool_matrix a(4, 4);
     a.topological_sort();
+
+
+    return 0;
 }
