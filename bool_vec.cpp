@@ -342,7 +342,6 @@ void bool_matrix :: topological_sort()
     bool_vec deleter(col);
     bool_vec vec_1(col);
 
-
     cout<<endl;
 
     int *empty = new  int [row];
@@ -444,7 +443,10 @@ int main()
     }
 
     
+    
     a.topological_sort();
+
+    vec.close();
 
 
     return 0;
